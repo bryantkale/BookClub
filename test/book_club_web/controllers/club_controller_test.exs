@@ -88,11 +88,27 @@ defmodule BookClubWeb.ClubControllerTest do
       assert html_response(conn, 200) =~ new_user.email
       assert html_response(conn, 200) =~ orig_email
     end
+  end
 
-    # test "renders errors when data is invalid", %{conn: conn, club: club} do
-    #   conn = put(conn, Routes.club_path(conn, :update, club), club: @invalid_attrs)
-    #   assert html_response(conn, 200) =~ "Edit Club"
-    # end
+  describe "leave club" do
+    setup [:register_and_log_in_user]
+
+    test "new user can join and leave existing club", %{conn: conn} do
+      orig_email = get_user_from_conn(conn).email
+      club = club_fixture(@create_attrs, [orig_email])
+      conn = put(conn, Routes.club_path(conn, :leave_club, club))
+      assert redirected_to(conn) == Routes.club_path(conn, :show, club)
+      conn = get(conn, Routes.club_path(conn, :show, club))
+      assert html_response(conn, 200) =~ "Left club successfully"
+    end
+
+    test "new user can't leave club without first joining", %{conn: conn} do
+      club = club_fixture(@create_attrs, [])
+      conn = put(conn, Routes.club_path(conn, :leave_club, club))
+      assert redirected_to(conn) == Routes.club_path(conn, :show, club)
+      conn = get(conn, Routes.club_path(conn, :show, club))
+      assert html_response(conn, 200) =~ "Could not leave club"
+    end
   end
 
   describe "delete club" do

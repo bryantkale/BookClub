@@ -26,6 +26,12 @@
 
 <span><%= link "Edit", to: Routes.club_path(@conn, :edit, @club) %></span> |
 <span><%= link "Back", to: Routes.club_path(@conn, :index) %></span>
-<%= form_for @conn, Routes.club_path(@conn, :join_club, @club), [method: "put"], fn _ -> %>
-  <%= submit "Join Club" %>
+<%= if Enum.member?(Enum.map(@club.members, fn member -> member.id end), @conn.assigns.current_user.id) do %>
+  <%= form_for @conn, Routes.club_path(@conn, :leave_club, @club), [method: "put"], fn _ -> %>
+    <%= submit "Leave Club" %>
+  <% end %>
+<% else %>
+  <%= form_for @conn, Routes.club_path(@conn, :join_club, @club), [method: "put"], fn _ -> %>
+    <%= submit "Join Club" %>
+  <% end %>
 <% end %>

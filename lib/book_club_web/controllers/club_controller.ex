@@ -65,6 +65,22 @@ defmodule BookClubWeb.ClubController do
     end
   end
 
+  def leave_club(conn, %{"id" => id}) do
+    club = Clubs.get_club!(id)
+
+    case Clubs.leave_club(club, conn.assigns.current_user.email) do
+      {:ok, _club} ->
+        conn
+        |> put_flash(:info, "Left club successfully.")
+        |> redirect(to: Routes.club_path(conn, :show, club))
+
+      {:error, %Ecto.Changeset{} = _changeset} ->
+        conn
+        |> put_flash(:info, "Could not leave club.")
+        |> redirect(to: Routes.club_path(conn, :show, club))
+    end
+  end
+
   def delete(conn, %{"id" => id}) do
     club = Clubs.get_club!(id)
     {:ok, _club} = Clubs.delete_club(club)

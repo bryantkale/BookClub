@@ -80,6 +80,7 @@ defmodule BookClubWeb.Router do
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
 
     put "/clubs/join/:id", ClubController, :join_club
+    put "/clubs/leave/:id", ClubController, :leave_club
     resources "/clubs", ClubController
   end
 
