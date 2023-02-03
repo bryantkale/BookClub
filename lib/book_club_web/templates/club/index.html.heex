@@ -1,0 +1,28 @@
+<h1>Listing Clubs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for club <- @clubs do %>
+    <tr>
+      <td><%= club.name %></td>
+      <td><%= club.description %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.club_path(@conn, :show, club) %></span>
+        <span><%= link "Edit", to: Routes.club_path(@conn, :edit, club) %></span>
+        <span><%= link "Delete", to: Routes.club_path(@conn, :delete, club), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Club", to: Routes.club_path(@conn, :new) %></span>
