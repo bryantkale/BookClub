@@ -1,0 +1,30 @@
+<h1>Show Club</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @club.name %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @club.description %>
+  </li>
+
+  <li>
+    <strong>Members:</strong>
+    <ul>
+    <%= for member <- @club.members do %>
+      <li>
+      <%= member.email %>
+      </li>
+    <%= end %>
+    </ul>
+  </li>
+</ul>
+
+<span><%= link "Edit", to: Routes.club_path(@conn, :edit, @club) %></span> |
+<span><%= link "Back", to: Routes.club_path(@conn, :index) %></span>
+
+

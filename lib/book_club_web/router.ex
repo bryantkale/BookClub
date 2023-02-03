@@ -78,6 +78,8 @@ defmodule BookClubWeb.Router do
     get "/users/settings", UserSettingsController, :edit
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
+
+    resources "/clubs", ClubController
   end
 
   scope "/", BookClubWeb do

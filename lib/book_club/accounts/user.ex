@@ -8,6 +8,7 @@ defmodule BookClub.Accounts.User do
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
 
+    many_to_many :clubs, BookClub.Accounts.User, join_through: BookClub.Clubs.Member
     timestamps()
   end
 
