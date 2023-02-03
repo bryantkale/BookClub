@@ -19,12 +19,13 @@
       <li>
       <%= member.email %>
       </li>
-    <%= end %>
+    <% end %>
     </ul>
   </li>
 </ul>
 
 <span><%= link "Edit", to: Routes.club_path(@conn, :edit, @club) %></span> |
 <span><%= link "Back", to: Routes.club_path(@conn, :index) %></span>
-
-
+<%= form_for @conn, Routes.club_path(@conn, :join_club, @club), [method: "put"], fn _ -> %>
+  <%= submit "Join Club" %>
+<% end %>

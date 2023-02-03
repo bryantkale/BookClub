@@ -2,6 +2,7 @@ defmodule BookClubWeb.ClubControllerTest do
   use BookClubWeb.ConnCase
 
   import BookClub.ClubsFixtures
+  import BookClub.AccountsFixtures
 
   @create_attrs %{description: "some description", name: "some name"}
   @update_attrs %{description: "some updated description", name: "some updated name"}
@@ -36,6 +37,7 @@ defmodule BookClubWeb.ClubControllerTest do
 
       conn = get(conn, Routes.club_path(conn, :show, id))
       assert html_response(conn, 200) =~ "Show Club"
+      assert html_response(conn, 200) =~ get_user_from_conn(conn).email
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -68,6 +70,29 @@ defmodule BookClubWeb.ClubControllerTest do
       conn = put(conn, Routes.club_path(conn, :update, club), club: @invalid_attrs)
       assert html_response(conn, 200) =~ "Edit Club"
     end
+  end
+
+  describe "join club" do
+    setup [:register_and_log_in_user]
+
+    test "new user can join existing club", %{conn: conn} do
+      orig_email = get_user_from_conn(conn).email
+      club = club_fixture(@create_attrs, [orig_email])
+
+      new_user = user_fixture()
+      conn = log_in_user(conn, new_user)
+      conn = put(conn, Routes.club_path(conn, :join_club, club))
+      assert redirected_to(conn) == Routes.club_path(conn, :show, club)
+
+      conn = get(conn, Routes.club_path(conn, :show, club))
+      assert html_response(conn, 200) =~ new_user.email
+      assert html_response(conn, 200) =~ orig_email
+    end
+
+    # test "renders errors when data is invalid", %{conn: conn, club: club} do
+    #   conn = put(conn, Routes.club_path(conn, :update, club), club: @invalid_attrs)
+    #   assert html_response(conn, 200) =~ "Edit Club"
+    # end
   end
 
   describe "delete club" do

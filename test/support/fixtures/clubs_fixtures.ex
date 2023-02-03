@@ -7,14 +7,14 @@ defmodule BookClub.ClubsFixtures do
   @doc """
   Generate a club.
   """
-  def club_fixture(attrs \\ %{}) do
+  def club_fixture(attrs \\ %{}, users \\ []) do
     {:ok, club} =
       attrs
       |> Enum.into(%{
         description: "some description",
         name: "some name"
       })
-      |> BookClub.Clubs.create_club()
+      |> BookClub.Clubs.create_club(users)
 
     club
   end

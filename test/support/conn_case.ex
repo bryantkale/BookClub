@@ -61,4 +61,23 @@ defmodule BookClubWeb.ConnCase do
     |> Phoenix.ConnTest.init_test_session(%{})
     |> Plug.Conn.put_session(:user_token, token)
   end
+
+  @doc """
+  Logs out the given `user` into the `conn`.
+
+  It returns an updated `conn`.
+  """
+  def log_out_user(conn) do
+    conn
+    |> BookClubWeb.UserAuth.log_out_user()
+  end
+
+  @doc """
+  Returns the loaded user from an authenticated session
+  """
+  def get_user_from_conn(conn) do
+    conn
+    |> Plug.Conn.get_session(:user_token)
+    |> BookClub.Accounts.get_user_by_session_token()
+  end
 end

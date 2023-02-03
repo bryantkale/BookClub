@@ -54,24 +54,21 @@ defmodule BookClub.Clubs do
 
   """
   def create_club(attrs \\ %{}, member_emails \\ []) do
-    IO.inspect(member_emails, label: "emails")
-    IO.inspect(load_new_members(member_emails), label: "loaded_emails")
     %Club{}
     |> Club.changeset(attrs)
-    |> IO.inspect(label: "before")
-    |> Ecto.Changeset.put_assoc(:members, load_new_members(member_emails))
-    |> IO.inspect(label: "after")
+    |> load_new_members(member_emails)
     |> Repo.insert()
     # |> Repo.preload(:members)
   end
 
 
-defp load_new_members(emails) do
+defp load_new_members(club_changeset, emails) do
   # Should we assume that are all valid members?
   # get_user_by_email will just return nil, so not sure it matters.
-  emails
+  retrieved = emails
   |> Enum.map(fn email -> BookClub.Accounts.get_user_by_email(email) end)
   |> Enum.filter(fn member -> member != nil end)
+  Ecto.Changeset.put_assoc(club_changeset, :members, Ecto.Changeset.get_field(club_changeset, :members, []) ++ retrieved)
 end
 
   @doc """
@@ -108,7 +105,8 @@ end
   def join_club(%Club{} = club, user_email) do
     club
     |> Repo.preload(:members)
-    |> Ecto.Changeset.put_assoc(:members, load_new_members([user_email]))
+    |> Club.changeset(%{})
+    |> load_new_members([user_email])
     |> Repo.update()
     
   end
