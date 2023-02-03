@@ -6,7 +6,7 @@ defmodule BookClub.Clubs do
   import Ecto.Query, warn: false
   alias BookClub.Repo
 
-  alias BookClub.Clubs.Club
+  alias BookClub.Clubs.{Club, Member}
 
   @doc """
   Returns the list of clubs.
@@ -108,7 +108,29 @@ end
     |> Club.changeset(%{})
     |> load_new_members([user_email])
     |> Repo.update()
-    
+  end
+
+  @doc """
+  Leaves a club for a user_email.
+
+  ## Examples
+
+      iex> leave_club(club, "real_user@email.com")
+      {:ok, %Club{}}
+
+      iex> leave_club(club, "bad_user@email.com")
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def leave_club(%Club{} = club, user_email) do
+    user = BookClub.Accounts.get_user_by_email(user_email)
+
+    case Repo.get_by(Member, [club_id: club.id, user_id: user.id]) do
+      nil ->
+        {:error, Ecto.Changeset.add_error(%Ecto.Changeset{}, :membership, "not found")}
+      member ->
+        Repo.delete(member)
+    end
   end
 
   @doc """
